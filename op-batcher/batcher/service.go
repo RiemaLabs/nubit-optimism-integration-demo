@@ -18,6 +18,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-batcher/rpc"
 	"github.com/ethereum-optimism/optimism/op-node/chaincfg"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	"github.com/ethereum-optimism/optimism/op-service/cliapp"
 	"github.com/ethereum-optimism/optimism/op-service/dial"
@@ -76,6 +77,7 @@ type BatcherService struct {
 	stopped         atomic.Bool
 
 	NotSubmittingOnStart bool
+	NubitDABackend       *nubit.NubitDABackend
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -123,6 +125,9 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	// init before driver
 	if err := bs.initPlasmaDA(cfg); err != nil {
 		return fmt.Errorf("failed to init plasma DA: %w", err)
+	}
+	if err := bs.initDA(cfg); err != nil {
+		return fmt.Errorf("failed to start da server: %w", err)
 	}
 	bs.initDriver()
 	if err := bs.initRPCServer(cfg); err != nil {
@@ -307,6 +312,7 @@ func (bs *BatcherService) initDriver() {
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
 		PlasmaDA:         bs.PlasmaDA,
+		NubitDABackend:   bs.NubitDABackend,
 	})
 }
 
@@ -420,6 +426,16 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 		bs.Log.Info("Batch Submitter stopped")
 	}
 	return result
+}
+
+func (bs *BatcherService) initDA(cfg *CLIConfig) error {
+	daConfig := cfg.DaConfig
+	n, err := nubit.NewNubitDABackendFromCfg(daConfig)
+	if err != nil {
+		return err
+	}
+	bs.NubitDABackend = n
+	return nil
 }
 
 var _ cliapp.Lifecycle = (*BatcherService)(nil)

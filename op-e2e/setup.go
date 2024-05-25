@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils/batcher"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	ds "github.com/ipfs/go-datastore"
 	dsSync "github.com/ipfs/go-datastore/sync"
 	ic "github.com/libp2p/go-libp2p/core/crypto"
@@ -106,6 +107,10 @@ func DefaultSystemConfig(t testing.TB) SystemConfig {
 		premine[addr] = new(big.Int).Mul(big.NewInt(1000), big.NewInt(params.Ether))
 	}
 
+	DaConfig := nubit.NewCLIConfig()
+	DaConfig.AuthToken = os.Getenv("OP_E2E_AUTH_TOKEN")
+	DaConfig.Rpc = os.Getenv("OP_E2E_DA_NODE_RPC")
+
 	return SystemConfig{
 		Secrets:                secrets,
 		Premine:                premine,
@@ -132,6 +137,7 @@ func DefaultSystemConfig(t testing.TB) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				DaConfig:                    DaConfig,
 			},
 			"verifier": {
 				Driver: driver.Config{
@@ -143,6 +149,7 @@ func DefaultSystemConfig(t testing.TB) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				DaConfig:                    DaConfig,
 			},
 		},
 		Loggers: map[string]log.Logger{
@@ -834,6 +841,10 @@ func (cfg SystemConfig) Start(t *testing.T, _opts ...SystemConfigOption) (*Syste
 		compressionAlgo = derive.Brotli10
 	}
 
+	DaConfig := nubit.NewCLIConfig()
+	DaConfig.AuthToken = os.Getenv("OP_E2E_AUTH_TOKEN")
+	DaConfig.Rpc = os.Getenv("OP_E2E_DA_NODE_RPC")
+
 	batcherCLIConfig := &bss.CLIConfig{
 		L1EthRpc:                 sys.EthInstances["l1"].WSEndpoint(),
 		L2EthRpc:                 sys.EthInstances["sequencer"].WSEndpoint(),
@@ -855,6 +866,7 @@ func (cfg SystemConfig) Start(t *testing.T, _opts ...SystemConfigOption) (*Syste
 		BatchType:            batchType,
 		DataAvailabilityType: sys.Cfg.DataAvailabilityType,
 		CompressionAlgo:      compressionAlgo,
+		DaConfig:             DaConfig,
 	}
 	// Batch Submitter
 	batcher, err := bss.BatcherServiceFromCLIConfig(context.Background(), "0.0.1", batcherCLIConfig, sys.Cfg.Loggers["batcher"])

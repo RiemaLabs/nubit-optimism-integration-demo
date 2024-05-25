@@ -13,6 +13,7 @@
 
 - [What is Optimism?](#what-is-optimism)
 - [Documentation](#documentation)
+- [Nubit Integration](#nubit-integration)
 - [Specification](#specification)
 - [Community](#community)
 - [Contributing](#contributing)
@@ -31,6 +32,25 @@
 [Optimism](https://www.optimism.io/) is a project dedicated to scaling Ethereum's technology and expanding its ability to coordinate people from across the world to build effective decentralized economies and governance systems. The [Optimism Collective](https://app.optimism.io/announcement) builds open-source software for running L2 blockchains and aims to address key governance and economic challenges in the wider cryptocurrency ecosystem. Optimism operates on the principle of **impact=profit**, the idea that individuals who positively impact the Collective should be proportionally rewarded with profit. **Change the incentives and you change the world.**
 
 In this repository, you'll find numerous core components of the OP Stack, the decentralized software stack maintained by the Optimism Collective that powers Optimism and forms the backbone of blockchains like [OP Mainnet](https://explorer.optimism.io/) and [Base](https://base.org). Designed to be "aggressively open source," the OP Stack encourages you to explore, modify, extend, and test the code as needed. Although not all elements of the OP Stack are contained here, many of its essential components can be found within this repository. By collaborating on free, open software and shared standards, the Optimism Collective aims to prevent siloed software development and rapidly accelerate the development of the Ethereum ecosystem. Come contribute, build the future, and redefine power, together.
+
+## Nubit Integration
+
+### Demo Steps
+
+Assume you have deployed your Nubit DA Node and it is serving RPC at http://localhost:26658 without auth-checking.
+```shell
+# Setup the optimism devnet first.
+sudo make devnet-up
+# Try e2eTests
+OP_E2E_DISABLE_PARALLEL=true OP_E2E_CANNON_ENABLED=false OP_E2E_AUTH_TOKEN=YOUE_NUBIT_AUTH_TOKEN OP_E2E_DA_NODE_RPC=http://localhost:26658 make test
+```
+
+### FAQ
+- Q: How to deal if Foundry got stuck about ignored_error_codes.0: `transient-storage`?
+- A: Update your foundry after (this commit)[https://github.com/foundry-rs/foundry/commit/c24933da985419ea143de7e8636d5b0a48d2fab7].
+
+- Q: How to deal if Docker raise this error: `ERROR[internal] load metadata for docker.io` on MacOS?
+- A: Check (this page)[https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock].
 
 ## Documentation
 

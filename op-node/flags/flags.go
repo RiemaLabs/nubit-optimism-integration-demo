@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/ethereum-optimism/optimism/op-node/rollup/sync"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	openum "github.com/ethereum-optimism/optimism/op-service/enum"
 	opflags "github.com/ethereum-optimism/optimism/op-service/flags"
@@ -421,6 +422,7 @@ func init() {
 	optionalFlags = append(optionalFlags, DeprecatedFlags...)
 	optionalFlags = append(optionalFlags, opflags.CLIFlags(EnvVarPrefix, RollupCategory)...)
 	optionalFlags = append(optionalFlags, plasma.CLIFlags(EnvVarPrefix, PlasmaCategory)...)
+	optionalFlags = append(optionalFlags, nubit.CLIFlags(EnvVarPrefix)...)
 	Flags = append(requiredFlags, optionalFlags...)
 }
 

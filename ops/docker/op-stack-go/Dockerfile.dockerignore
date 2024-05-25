@@ -13,6 +13,7 @@
 !/op-conductor
 !/op-heartbeat
 !/op-node
+!/op-nubit
 !/op-preimage
 !/op-program
 !/op-proposer
