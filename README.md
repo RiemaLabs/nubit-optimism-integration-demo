@@ -38,8 +38,7 @@ In this repository, you'll find numerous core components of the OP Stack, the de
 ### Basic Design
 Instead of sending batched transactions to Ethereum L1 (which is expensive), after integrating with Nubit DA backend, the batches are sent to Nubit DA. For sequencers (operators) and users, less data has to be locally stored since storing and retrieving data via Nubit is efficient, cheap, trustless, and secure.
 
-Specifically, `op-batcher` realizes the two functionalities, i.e., batching the transactions and sending them to the Nubit DA.
-
+Specifically, `op-batcher` realizes the two functionalities additionally, i.e., batching the transactions and sending them to the Nubit DA.
 After receiving the data, Nubit backend would return a proof of data inclusion. For an op-node to retrieve the transaction data, it first fetches the corresponding data commitment from `op-batcher`. Then, it retrieves the data from the DA backend and verifies it by the commitment. Compared with fetching data from Ehtereum calldata, it is more efficient and the verification cost is significantly lower. Hence, the scalability and security are further improved.
 
 ### Demo Steps
