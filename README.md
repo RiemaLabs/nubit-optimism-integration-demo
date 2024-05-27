@@ -44,23 +44,38 @@ After receiving the data, Nubit backend would return a proof of data inclusion. 
 ### Demo Steps
 
 Assume you have deployed your Nubit DA Node and it is serving RPC at http://localhost:26658 without auth-checking.
+
+#### Local environment setup
+To setup local environment, you should install `docker` / `docker-compose`.
+And please install `python` with version >= python3.9
+
+foundry setup:
+
+```shell
+curl -L https://foundry.paradigm.xyz | bash
+source $HOME/.bashrc
+foundryup
+```
+
+local build and test:
 ```shell
 # Setup the optimism devnet first.
 sudo make devnet-up
-# Try e2eTests
-OP_E2E_DISABLE_PARALLEL=true 
-OP_E2E_CANNON_ENABLED=false 
-OP_E2E_AUTH_TOKEN=YOUE_NUBIT_AUTH_TOKEN 
-OP_E2E_DA_NODE_RPC=http://localhost:26658 
-make test
+
+# Go into path `op-e2e` and try e2eTests.
+export OP_E2E_DISABLE_PARALLEL=true
+export OP_E2E_CANNON_ENABLED=false
+export OP_E2E_AUTH_TOKEN=<YOUE_NUBIT_AUTH_TOKEN>
+export OP_E2E_DA_NODE_RPC=http://127.0.0.1:26658
+cd op-e2e && make test && cd ..
 ```
 
 ### FAQ
 - Q: How to deal if Foundry got stuck about ignored_error_codes.0: `transient-storage`?
 - A: Update your foundry after (this commit)[https://github.com/foundry-rs/foundry/commit/c24933da985419ea143de7e8636d5b0a48d2fab7].
 
-- Q: How to deal if Docker raise this error: `ERROR[internal] load metadata for docker.io` on MacOS?
-- A: Check (this page)[https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock].
+- Q: How to deal if Docker raise this error: `ERROR: failed to solve: error getting credentials - err: exit status 1, out:` on MacOS?
+- A: Check (this page)[https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock]. You shall remove local `~/.docker/config` file, restart docker service and docker login again.
 
 ## Documentation
 
