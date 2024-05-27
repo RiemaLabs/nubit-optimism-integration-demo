@@ -1,11 +1,11 @@
 module github.com/ethereum-optimism/optimism/op-ufm
 
-go 1.21
+go 1.21.1
 
-toolchain go1.21.6
+toolchain go1.22.3
 
 require (
-	cloud.google.com/go/kms v1.12.1
+	cloud.google.com/go/kms v1.15.2
 	github.com/BurntSushi/toml v1.3.2
 	github.com/ethereum-optimism/optimism v1.6.2-0.20240222202618-f707883038d5
 	github.com/ethereum/go-ethereum v1.13.15
@@ -17,9 +17,9 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.20.1 // indirect
+	cloud.google.com/go/compute v1.23.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/iam v1.1.0 // indirect
+	cloud.google.com/go/iam v1.1.2 // indirect
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/VictoriaMetrics/fastcache v1.12.1 // indirect
@@ -88,11 +88,11 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
 	google.golang.org/api v0.132.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20230706204954-ccb25ca9f130 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20230706204954-ccb25ca9f130 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230711160842-782d3b101e98 // indirect
-	google.golang.org/grpc v1.56.3 // indirect
+	google.golang.org/appengine v1.6.8 // indirect
+	google.golang.org/genproto v0.0.0-20231002182017-d307bd883b97 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20231002182017-d307bd883b97 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231002182017-d307bd883b97 // indirect
+	google.golang.org/grpc v1.60.1 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect

@@ -1,8 +1,8 @@
 module claim
 
-go 1.21
+go 1.21.1
 
-toolchain go1.21.1
+toolchain go1.22.3
 
 require github.com/ethereum-optimism/optimism v0.0.0
 
