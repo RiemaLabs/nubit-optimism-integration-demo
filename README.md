@@ -72,10 +72,10 @@ cd op-e2e && make test && cd ..
 
 ### FAQ
 - Q: How to deal if Foundry got stuck about ignored_error_codes.0: `transient-storage`?
-- A: Update your foundry after (this commit)[https://github.com/foundry-rs/foundry/commit/c24933da985419ea143de7e8636d5b0a48d2fab7].
+- A: Update your foundry to a version after [this commit](https://github.com/foundry-rs/foundry/commit/c24933da985419ea143de7e8636d5b0a48d2fab7).
 
-- Q: How to deal if Docker raise this error: `ERROR: failed to solve: error getting credentials - err: exit status 1, out:` on MacOS?
-- A: Check (this page)[https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock]. You shall remove local `~/.docker/config` file, restart docker service and docker login again.
+- Q: How to deal if Docker raise this error: `ERROR[internal] load metadata for docker.io` on MacOS?
+- A: Check [this page](https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock) to fix the bug.
 
 ## Documentation
 
