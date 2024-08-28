@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/driver"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/sync"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	"github.com/ethereum-optimism/optimism/op-service/oppprof"
 	"github.com/ethereum/go-ethereum/log"
@@ -75,7 +76,8 @@ type Config struct {
 	ConductorRpcTimeout time.Duration
 
 	// Plasma DA config
-	Plasma plasma.CLIConfig
+	Plasma   plasma.CLIConfig
+	DaConfig nubit.CLIConfig
 }
 
 type RPCConfig struct {

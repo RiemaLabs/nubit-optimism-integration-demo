@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/ethereum-optimism/optimism/op-node/chaincfg"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	"github.com/ethereum-optimism/optimism/op-service/oppprof"
 	"github.com/ethereum-optimism/optimism/op-service/sources"
@@ -111,7 +112,8 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 		ConductorRpc:        ctx.String(flags.ConductorRpcFlag.Name),
 		ConductorRpcTimeout: ctx.Duration(flags.ConductorRpcTimeoutFlag.Name),
 
-		Plasma: plasma.ReadCLIConfig(ctx),
+		Plasma:   plasma.ReadCLIConfig(ctx),
+		DaConfig: nubit.ReadCLIConfig(ctx),
 	}
 
 	if err := cfg.LoadPersisted(log); err != nil {

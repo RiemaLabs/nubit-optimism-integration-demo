@@ -2,6 +2,7 @@ package batcher
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/derive"
+	nubit "github.com/ethereum-optimism/optimism/op-nubit"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	"github.com/ethereum-optimism/optimism/op-service/dial"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
@@ -66,6 +68,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfigProvider
 	PlasmaDA         *plasma.DAClient
+	NubitDABackend   *nubit.NubitDABackend
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -540,7 +543,7 @@ func (l *BatchSubmitter) cancelBlockingTx(queue *txmgr.Queue[txRef], receiptsCh 
 	var candidate *txmgr.TxCandidate
 	var err error
 	if isBlockedBlob {
-		candidate = l.calldataTxCandidate([]byte{})
+		candidate, err = l.calldataTxCandidate([]byte{})
 	} else if candidate, err = l.blobTxCandidate(emptyTxData); err != nil {
 		panic(err) // this error should not happen
 	}
@@ -582,7 +585,11 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 			// signal plasma commitment tx with TxDataVersion1
 			data = comm.TxData()
 		}
-		candidate = l.calldataTxCandidate(data)
+		candidate, err = l.calldataTxCandidate(data)
+		if err != nil {
+			l.recordFailedTx(txdata.ID(), err)
+			return nil
+		}
 	}
 
 	l.queueTx(txdata, false, candidate, queue, receiptsCh)
@@ -617,12 +624,25 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
-func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
-	l.Log.Info("Building Calldata transaction candidate", "size", len(data))
+func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
+	l.Log.Info("building Calldata transaction candidate", "size", len(data))
+	ctx, cancel := context.WithTimeout(context.Background(), l.NubitDABackend.SubmitTimeout)
+	ids, err := l.NubitDABackend.Client.Submit(ctx, [][]byte{data}, -1, l.NubitDABackend.Namespace)
+	cancel()
+	if err == nil && len(ids) == 1 {
+		l.Log.Info("🏆 nubit: blob successfully submitted", "id", hex.EncodeToString(ids[0]))
+		data = append([]byte{nubit.NubitDataPrefix}, ids[0]...)
+	} else {
+		if !l.NubitDABackend.EnableETHBackup {
+			return nil, fmt.Errorf("❗ nubit: blob submission failed; eth as the backup disabled: %w", err)
+		}
+
+		l.Log.Info("❗ nubit: blob submission failed; submit to eth as the backup", "err", err)
+	}
 	return &txmgr.TxCandidate{
 		To:     &l.RollupConfig.BatchInboxAddress,
 		TxData: data,
-	}
+	}, nil
 }
 
 func (l *BatchSubmitter) handleReceipt(r txmgr.TxReceipt[txRef]) {

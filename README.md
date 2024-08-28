@@ -13,6 +13,7 @@
 
 - [What is Optimism?](#what-is-optimism)
 - [Documentation](#documentation)
+- [Nubit Integration](#nubit-integration)
 - [Specification](#specification)
 - [Community](#community)
 - [Contributing](#contributing)
@@ -31,6 +32,50 @@
 [Optimism](https://www.optimism.io/) is a project dedicated to scaling Ethereum's technology and expanding its ability to coordinate people from across the world to build effective decentralized economies and governance systems. The [Optimism Collective](https://www.optimism.io/vision) builds open-source software that powers scalable blockchains and aims to address key governance and economic challenges in the wider Ethereum ecosystem. Optimism operates on the principle of **impact=profit**, the idea that individuals who positively impact the Collective should be proportionally rewarded with profit. **Change the incentives and you change the world.**
 
 In this repository you'll find numerous core components of the OP Stack, the decentralized software stack maintained by the Optimism Collective that powers Optimism and forms the backbone of blockchains like [OP Mainnet](https://explorer.optimism.io/) and [Base](https://base.org). The OP Stack is designed to be aggressively open-source — you are welcome to explore, modify, and extend this code.
+
+## Nubit Integration
+
+### Basic Design
+Instead of sending batched transactions to Ethereum L1 (which is expensive), after integrating with Nubit DA backend, the batches are sent to Nubit DA. For sequencers (operators) and users, less data has to be locally stored since storing and retrieving data via Nubit is efficient, cheap, trustless, and secure.
+
+Specifically, `op-batcher` realizes the two functionalities additionally, i.e., batching the transactions and sending them to the Nubit DA.
+After receiving the data, Nubit backend would return a proof of data inclusion. For an op-node to retrieve the transaction data, it first fetches the corresponding data commitment from `op-batcher`. Then, it retrieves the data from the DA backend and verifies it by the commitment. Compared with fetching data from Ehtereum calldata, it is more efficient and the verification cost is significantly lower. Hence, the scalability and security are further improved.
+
+### Demo Steps
+
+Assume you have deployed your Nubit DA Node and it is serving RPC at http://localhost:26658 without auth-checking.
+
+#### Local environment setup
+To setup local environment, you should install `docker` / `docker-compose`.
+And please install `python` with version >= python3.9
+
+foundry setup:
+
+```shell
+curl -L https://foundry.paradigm.xyz | bash
+source $HOME/.bashrc
+foundryup
+```
+
+local build and test:
+```shell
+# Setup the optimism devnet first.
+sudo make devnet-up
+
+# Go into path `op-e2e` and try e2eTests.
+export OP_E2E_DISABLE_PARALLEL=true
+export OP_E2E_CANNON_ENABLED=false
+export OP_E2E_AUTH_TOKEN=<YOUE_NUBIT_AUTH_TOKEN>
+export OP_E2E_DA_NODE_RPC=http://127.0.0.1:26658
+cd op-e2e && make test && cd ..
+```
+
+### FAQ
+- Q: How to deal if Foundry got stuck about ignored_error_codes.0: `transient-storage`?
+- A: Update your foundry to a version after [this commit](https://github.com/foundry-rs/foundry/commit/c24933da985419ea143de7e8636d5b0a48d2fab7).
+
+- Q: How to deal if Docker raise this error: `ERROR[internal] load metadata for docker.io` on MacOS?
+- A: Check [this page](https://serverfault.com/questions/1130018/how-to-fix-error-internal-load-metadata-for-docker-io-error-while-using-dock) to fix the bug.
 
 ## Documentation
 
