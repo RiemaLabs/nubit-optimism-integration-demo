@@ -19,8 +19,6 @@ abstract contract Deployer is Script, Artifacts {
     function setUp() public virtual override {
         Artifacts.setUp();
 
-        console.log("Commit hash: %s", Executables.gitCommitHash());
-
         vm.etch(address(cfg), vm.getDeployedCode("DeployConfig.s.sol:DeployConfig"));
         vm.label(address(cfg), "DeployConfig");
         vm.allowCheatcodes(address(cfg));
