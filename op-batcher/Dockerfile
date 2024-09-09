@@ -27,4 +27,4 @@ FROM alpine:3.19
 
 COPY --from=builder /app/op-batcher/bin/op-batcher /usr/local/bin
 
-ENTRYPOINT ["op-batcher"]
+CMD ["op-batcher"]
