@@ -138,7 +138,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 					out = append(out, blobs[0])
 				default:
 					out = append(out, data)
-					log.Info("nubit: submitting to eth as the backup")
+					log.Info("nubit: got blobs from eth as the backup")
 				}
 			}
 
