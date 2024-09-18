@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-      - develop
+      - dev/nubit-v1.9.0-test
 
 jobs:
   slither-analyze:
