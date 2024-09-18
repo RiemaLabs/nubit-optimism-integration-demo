@@ -625,19 +625,19 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 }
 
 func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
-	l.Log.Info("building Calldata transaction candidate", "size", len(data))
+	l.Log.Info("Building Calldata transaction candidate", "size", len(data))
 	ctx, cancel := context.WithTimeout(context.Background(), l.NubitDABackend.SubmitTimeout)
 	ids, err := l.NubitDABackend.Client.Submit(ctx, [][]byte{data}, -1, l.NubitDABackend.Namespace)
 	cancel()
 	if err == nil && len(ids) == 1 {
-		l.Log.Info("🏆 nubit: blob successfully submitted", "id", hex.EncodeToString(ids[0]))
+		l.Log.Info("nubit: submit blob to Nubit DA successfully", "id", hex.EncodeToString(ids[0]))
 		data = append([]byte{nubit.NubitDataPrefix}, ids[0]...)
 	} else {
 		if !l.NubitDABackend.EnableETHBackup {
-			return nil, fmt.Errorf("❗ nubit: blob submission failed; eth as the backup disabled: %w", err)
+			return nil, fmt.Errorf("nubit: failed to submit blob to Nubit DA: %w, and the EnableETHBackup flag is disabled", err)
 		}
 
-		l.Log.Info("❗ nubit: blob submission failed; submit to eth as the backup", "err", err)
+		l.Log.Warn("nubit: failed to submit blob to Nubit DA: %w, submitting to ETH as backup", "err", err)
 	}
 	return &txmgr.TxCandidate{
 		To:     &l.RollupConfig.BatchInboxAddress,
