@@ -1,0 +1,48 @@
+name: Go Build & Test
+on:
+  push:
+    branches:
+      - dev/nubit-v1.9.0-test
+  pull_request:
+    branches:
+      - dev/nubit-v1.9.0-test
+
+jobs:
+  #  Build_Test:
+  #    name: Build And Test -v
+  #    runs-on: ubuntu-latest
+  #    env:
+  #      GH_ACCESS_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+  #    steps:
+  #      - uses: actions/checkout@v4
+  #      - name: Setup Go
+  #        uses: actions/setup-go@v5
+  #        with:
+  #          go-version: '1.22'
+  #      - name: Setup Config
+  #        run: |
+  #          git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+  #          go mod tidy
+  #      - name: Build
+  #        run: go build -v ./...
+  #      - name: Test with the Go CLI
+  #        run: go test -v ./... -timeout 600s
+  Build_Test_simple:
+    name: Build And Test simple
+    runs-on: ubuntu-latest
+    env:
+      GH_ACCESS_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Setup Config
+        run: |
+          git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+          go mod tidy
+      - name: Build
+        run: go build ./...
+      - name: Test with the Go CLI
+        run: go test ./...
