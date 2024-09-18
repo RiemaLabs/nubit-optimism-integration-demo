@@ -2,6 +2,7 @@ package derive
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -121,7 +122,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 			default:
 				switch data[0] {
 				case nubit.NubitDataPrefix:
-					log.Info("nubit: blob request", "id", hex.EncodeToString(tx.Data()))
+					log.Info("nubit: blob request", "id", hex.EncodeToString(tx.Data()[1:]))
 					ctx, cancel := context.WithTimeout(context.Background(), daBackend.FetchTimeout)
 					blobs, err := daBackend.Client.Get(ctx, [][]byte{data[1:]}, daBackend.Namespace)
 					cancel()
@@ -135,7 +136,11 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 							continue
 						}
 					}
-					out = append(out, blobs[0])
+					data := blobs[0]
+					md5Hash := md5.Sum(data)
+					md5String := hex.EncodeToString(md5Hash[:])
+					log.Info("nubit: got blob", "md5", md5String)
+					out = append(out, data)
 				default:
 					out = append(out, data)
 					log.Info("nubit: got blobs from eth as the backup")

@@ -2,6 +2,7 @@ package batcher
 
 import (
 	"context"
+	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -630,7 +631,9 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, e
 	ids, err := l.NubitDABackend.Client.Submit(ctx, [][]byte{data}, -1, l.NubitDABackend.Namespace)
 	cancel()
 	if err == nil && len(ids) == 1 {
-		l.Log.Info("nubit: submit blob to Nubit DA successfully", "id", hex.EncodeToString(ids[0]))
+		md5Hash := md5.Sum(data)
+		md5String := hex.EncodeToString(md5Hash[:])
+		l.Log.Info("nubit: submit blob to Nubit DA successfully", "id", hex.EncodeToString(ids[0]), "md5", md5String)
 		data = append([]byte{nubit.NubitDataPrefix}, ids[0]...)
 	} else {
 		if !l.NubitDABackend.EnableETHBackup {

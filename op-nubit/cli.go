@@ -72,8 +72,8 @@ type CLIConfig struct {
 }
 
 func (c CLIConfig) Check() error {
-	log.Println("nubit auth_token", c.AuthToken)
-	log.Println("nubit node rpc", c.AuthToken)
+	log.Println("nubit: checking", "namespace", c.Namespace)
+	log.Println("nubit: checking", "rpc", c.Rpc)
 	return nil
 }
 
