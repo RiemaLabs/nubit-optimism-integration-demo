@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Workaround to prevent slither-action from trying to install JS deps.
+      # Workaround to prevent slither-action from trying to install JS deps test.
       # Without this step, it detects the `package.json`, and since there is no
       # lockfile it defaults `npm install` which fails due to the preinstall
       # script to enforce pnpm. https://github.com/crytic/slither-action/issues/44#issuecomment-1338183656
